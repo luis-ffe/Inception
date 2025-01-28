@@ -1,16 +1,15 @@
 # Variables
-USER_HOME = /home/${USER}
-PROJECT_DIR = ./srcs
-DATA_DIR = $(USER_HOME)/data
+USER_HOME = /home/luis-ffe
+DATA_DIR = /home/luis-ffe/data
 
 # Targets
 all:
-	mkdir -p $(DATA_DIR)/mariadb && \
-	mkdir -p $(DATA_DIR)/wordpress && \
-	@cd $(PROJECT_DIR) && docker compose up --build -d
+	mkdir -p /home/luis-ffe/data/mariadb &&\
+	mkdir -p /home/luis-ffe/data/wordpress &&\
+	cd srcs/ && sudo docker-compose up --build -d
 
 down:
-	@cd $(PROJECT_DIR) && docker compose down
+	cd srcs/ && docker-compose down
 
 stop: 
 	@if [ -n "$$(docker ps -qa)" ]; then docker stop $$(docker ps -qa); fi
