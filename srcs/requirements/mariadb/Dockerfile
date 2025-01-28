@@ -12,4 +12,4 @@ RUN chmod +x /dbscript.sh
 
 RUN mkdir /run/mysqld
 
-ENTRYPOINT ["dbscript.sh"]
+ENTRYPOINT ["/dbscript.sh"]

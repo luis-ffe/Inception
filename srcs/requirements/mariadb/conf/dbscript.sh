@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 cat <<EOF > /etc/mysql/init.sql
 CREATE DATABASE ${DB_NAME};
 CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
