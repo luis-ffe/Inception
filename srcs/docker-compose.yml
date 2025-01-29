@@ -8,8 +8,6 @@ services:
       - wordpress_vol:/var/www/html
     ports:
       - "443:443"
-    expose:
-      - 443
     networks:
       - inception
 
@@ -27,7 +25,7 @@ services:
     networks:
       - inception
     expose:
-      - 9000
+      - "9000"
 
   mariadb:
     container_name: mariadb
@@ -41,7 +39,7 @@ services:
     networks:
       - inception
     expose:
-      - 3306
+      - "3306"
 
 volumes:
   mariadb_vol:
@@ -49,13 +47,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/luis-ffe/data/mariadb
+      device: /home/${USER}/data/mariadb
   wordpress_vol:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/luis-ffe/data/wordpress
+      device: /home/${USER}/data/wordpress
 
 networks:
   inception:
