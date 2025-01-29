@@ -1,12 +1,19 @@
 #!/bin/bash
 
-cat <<EOF > /etc/mysql/init.sql
-CREATE DATABASE ${DB_NAME};
-CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+# Initialize the database if it’s not already initialized
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mariadb-install-db --user=mysql --ldata=/var/lib/mysql
+fi
+
+# Start MySQL in the background
+mysqld_safe --skip-networking &
+sleep 5  # Wait for MySQL to be ready
+
+# Create database and user if they don’t exist
+echo "CREATE DATABASE IF NOT EXISTS ${DB_NAME};
+CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
-FLUSH PRIVILEGES;
-EOF
+FLUSH PRIVILEGES;" | mariadb -uroot
 
-mysql_install_db
-
-mysqld --init-file=/etc/mysql/init.sql
+# Start MySQL in the foreground
+exec mysqld_safe
