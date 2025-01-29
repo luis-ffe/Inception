@@ -4,10 +4,12 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install mariadb-server mariadb-client -y
 
-COPY ./conf/dbscript.sh /dbscript.sh
-COPY ./conf/dbserver.conf /etc/mysql/mariadb.conf.d/dbserver.conf
+COPY ./conf/init-db.sh /init-db.sh
 
-RUN chmod +x /dbscript.sh
-RUN mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
-ENTRYPOINT ["/dbscript.sh"]
+RUN chmod +x /init-db.sh
+
+RUN mkdir /run/mysqld
+
+ENTRYPOINT ["/init-db.sh"]
