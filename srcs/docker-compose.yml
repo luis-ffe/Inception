@@ -15,6 +15,7 @@ services:
     container_name: wordpress
     build: ./requirements/wordpress
     image: wordpress
+    restart: on-failure
     env_file:
       - .env
     volumes:
