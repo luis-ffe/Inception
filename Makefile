@@ -1,29 +1,46 @@
-all:
-	mkdir -p /home/${USER}/data/mariadb && mkdir -p /home/${USER}/data/wordpress && \
-	mkdir -p /home/${USER}/data/static && mkdir -p /home/${USER}/data/hexo
-	@cd ./srcs && docker compose up --build -d
+all: build run
 
-down:
-	@cd ./srcs && docker compose down
+data:
+	@if [ ! -d "home/luis-ffe/data/mariadb" ] && [ ! -d "home/luis-ffe/data/wordpress;" ]; then \
+	mkdir -p home/luis-ffe/data/mariadb && mkdir -p home/luis-ffe/data/wordpress; fi
 
-stop: 
-	@if [ -n "$$(docker ps -qa)" ]; then docker stop $$(docker ps -qa); fi
+build: data
+	docker compose -f srcs/docker-compose.yml build
 
-container_clean:
-	@if [ -n "$$(docker ps -qa)" ]; then docker rm $$(docker ps -qa); fi
+run:
+	docker compose -f srcs/docker-compose.yml up -d
 
-images_clean:
-	@if [ -n "$$(docker images -qa)" ]; then docker rmi -f $$(docker images -qa); fi
+exec:
+	$(eval service=$(filter-out $@,$(MAKECMDGOALS)))
+	docker compose -f srcs/docker-compose.yml exec $(service) bash
 
-volume_clean:
-	@if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
+status:
+	$(eval service=$(filter-out $@,$(MAKECMDGOALS)))
+	docker compose -f srcs/docker-compose.yml logs $(service)
 
-network_clean:
-	@if [ -n "$$(docker network ls -q)" ]; then docker network rm $$(docker network ls -q) 2>/dev/null || true; fi
+stop:
+	docker compose -f srcs/docker-compose.yml down
 
-clean:
-	docker system prune -a
+iclean:
+	docker compose -f srcs/docker-compose.yml down --rmi all
 
-fclean: stop container_clean images_clean volume_clean network_clean
+vclean:
+	docker compose -f srcs/docker-compose.yml down --rmi all -v
+	@sudo rm -rf home
 
-re: fclean all
+fclean: vclean
+	docker system prune -af
+
+dls:
+	docker ps -a
+
+vls:
+	docker volume ls
+
+ils:
+	docker image ls
+
+nls:
+	docker networks ls
+
+.SILENT:
