@@ -14,14 +14,10 @@ exec:
 	$(eval service=$(filter-out $@,$(MAKECMDGOALS)))
 	docker compose -f srcs/docker-compose.yml exec $(service) bash
 
-status:
-	$(eval service=$(filter-out $@,$(MAKECMDGOALS)))
-	docker compose -f srcs/docker-compose.yml logs $(service)
-
-stop:
+down:
 	docker compose -f srcs/docker-compose.yml down
 
-iclean:
+clean:
 	docker compose -f srcs/docker-compose.yml down --rmi all
 
 vclean:
@@ -31,16 +27,18 @@ vclean:
 fclean: vclean
 	docker system prune -af
 
-dls:
+list:
 	docker ps -a
 
-vls:
+volumes:
 	docker volume ls
 
-ils:
+images:
 	docker image ls
 
-nls:
-	docker networks ls
+network:
+	docker network ls
+
+full: list volumes images network
 
 .SILENT:
